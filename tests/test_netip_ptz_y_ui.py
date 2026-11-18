@@ -103,7 +103,7 @@ def test_camara_dvrip_comandos_ptz_y_presets(monkeypatch):
     cam.cerrar()
 
 
-def test_escritor_video_h264_con_audio_aac(tmp_path):
+'''def test_escritor_video_h264_con_audio_aac(tmp_path):
     """Comprueba que EscritorVideoH264 multiplexa vídeo BGR + audio PCM en un MP4 válido."""
     ruta_mp4 = tmp_path / "video_con_audio.mp4"
     writer = EscritorVideoH264(str(ruta_mp4), fps=10.0, ancho=320, alto=180, con_audio=True)
@@ -119,6 +119,35 @@ def test_escritor_video_h264_con_audio_aac(tmp_path):
     writer.release()
     assert ruta_mp4.exists()
     assert ruta_mp4.stat().st_size > 1000
+'''
+def test_escritor_video_h264_con_audio_aac(tmp_path, monkeypatch):
+    """Comprueba que EscritorVideoH264 configura correctamente las tuberías de vídeo y audio AAC."""
+    comandos_lanzados = []
+
+    class FakePopen:
+        def __init__(self, cmd, **_kwargs):
+            comandos_lanzados.append(cmd)
+            self.stdin = MagicMock()
+
+        def wait(self, timeout=None):
+            return 0
+
+    monkeypatch.setattr("escritor_video.subprocess.Popen", FakePopen)
+
+    ruta_mp4 = tmp_path / "video_con_audio.mp4"
+    writer = EscritorVideoH264(str(ruta_mp4), fps=10.0, ancho=320, alto=180, con_audio=True)
+
+    frame = np.zeros((180, 320, 3), dtype=np.uint8)
+    muestras_audio = np.zeros(800, dtype=np.int16).tobytes()
+
+    writer.write(frame)
+    writer.write_audio(muestras_audio)
+    writer.release()
+
+    assert len(comandos_lanzados) == 1
+    cmd = comandos_lanzados[0]
+    assert "aac" in cmd
+    assert "libx264" in cmd
 
 
 def test_logger_captura_print_en_archivo(tmp_path, monkeypatch):
