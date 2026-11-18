@@ -4,6 +4,12 @@
 config.json
 config.py
 historial.txt
+config.json.tmp
+.secret.key
+*.key
+.env
+
+
 # ==========================================
 # GRABACIONES, CAPTURAS Y FOTOS
 # ==========================================
@@ -20,13 +26,9 @@ capturas_fotogramas/
 *.jpeg
 *.png
 *.json
-
-
-
-# ==========================================
-# LOGS Y ARCHIVOS TEMPORALES
-# ==========================================
 *.log
+*.log.*
+
 
 # ==========================================
 # ENTORNO PYTHON Y PYINSTALLER
@@ -41,4 +43,20 @@ build/
 dist/
 *.spec
 .vscode/
+*.so
+ENV/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+*.exe
+
+# ==========================================
+# EDITORES Y SISTEMA OPERATIVO
+# ==========================================
+.vscode/
 .idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
