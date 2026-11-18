@@ -85,6 +85,21 @@ class CamaraBase:
         frame_final = self._aplicar_zoom_digital(frame_bgr)
         self.frame = frame_final
 
+    def _guardar_imagen_async(self, ruta, frame, mensaje_log=None):
+        """Guarda una imagen JPEG en segundo plano sin bloquear el hilo de vídeo."""
+        copia = frame.copy()
+
+        def _tarea_guardar():
+            try:
+                cv2.imwrite(ruta, copia)
+                if mensaje_log:
+                    print(mensaje_log)
+            except Exception as exc:
+                print(f"[{self.nombre}] Error guardando imagen {ruta}: {exc}")
+
+        threading.Thread(target=_tarea_guardar, daemon=True).start()
+    
+    
     def _detectar_movimiento(self, frame):
         if not self.deteccion_activa:
             return False
@@ -111,10 +126,9 @@ class CamaraBase:
                 self.ultima_captura_mov = ahora
                 fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
                 ruta = os.path.join(CARPETA_CAPTURAS, f"MOV_{self.nombre_archivo}_{fecha_str}.jpg")
-                cv2.imwrite(ruta, frame)
+                self._guardar_imagen_async(ruta, frame, f"¡ALERTA! Movimiento en {self.nombre} -> {ruta}")
                 enviar_alerta_movimiento(frame, self.nombre)
                 enviar_alerta_correo_rtsp(self.nombre, frame)
-                print(f"¡ALERTA! Movimiento en {self.nombre} -> {ruta}")
 
         return hay_movimiento
 
@@ -162,7 +176,7 @@ class CamaraBase:
             self.ultimo_fotograma_auto = ahora
             fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
             ruta = os.path.join(CARPETA_FOTOGRAMAS, f"AUTO_{self.nombre_archivo}_{fecha_str}.jpg")
-            cv2.imwrite(ruta, frame)
+            self._guardar_imagen_async(ruta, frame)
 
     def _aplicar_zoom_digital(self, frame):
         if self.zoom_digital <= 1.0:
@@ -218,8 +232,7 @@ class CamaraBase:
         if copia is not None:
             fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]
             ruta = os.path.join(CARPETA_FOTOGRAMAS, f"MANUAL_{self.nombre_archivo}_{fecha_str}.jpg")
-            cv2.imwrite(ruta, copia)
-            print(f"[{self.nombre}] Foto manual guardada -> {ruta}")
+            self._guardar_imagen_async(ruta, copia, f"[{self.nombre}] Foto manual guardada -> {ruta}")
 
     # --- PROTOCOLO NETIP COMPARTIDO (LED Y MICRÓFONO BIDIRECCIONAL) ---
 
