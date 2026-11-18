@@ -32,4 +32,4 @@ jobs:
 
       - name: Ejecutar batería de 39 tests con cobertura
         run: |
-          pytest -v --cov=. --cov-omit="configuracion.py,escritor_videoviejo.py,tests/*" --cov-report=term-missing
+          pytest -v --cov=. --cov-report=term-missing
