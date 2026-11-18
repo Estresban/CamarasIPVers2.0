@@ -1,8 +1,7 @@
-Set-Content -Path ".coveragerc" -Value @"
 [run]
 omit =
     configuracion.py
     escritor_videoviejo.py
     dvrip.py
     tests/*
-"@
+
