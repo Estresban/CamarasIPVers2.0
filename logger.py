@@ -19,14 +19,21 @@ class _RedireccionadorPrint:
 
     def write(self, mensaje):
         if self.stream_original:
-            self.stream_original.write(mensaje)
+            try:
+                self.stream_original.write(mensaje)
+            except OSError:
+                pass
         texto = mensaje.strip()
         if texto:
             self.logger.log(self.nivel, texto)
 
     def flush(self):
         if self.stream_original:
-            self.stream_original.flush()
+            try:
+                self.stream_original.flush()
+            except OSError:
+                pass
+
 
 
 def configurar_logs():

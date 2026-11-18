@@ -1,0 +1,116 @@
+
+pytest -v                               
+========================================================================== test session starts ===========================================================================
+platform win32 -- Python 3.15.0, pytest-9.2.0, pluggy-1.7.0 -- C:\Users\vicar.PORTATIL\Documents\CamarasIPVers2.0\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\vicar.PORTATIL\Documents\CamarasIPVers2.0
+plugins: platformdirs-4.14.7, cov-7.1.0
+collected 39 items                                                                                                                                                        
+
+tests/test_cobertura_final.py::test_audio_bidireccional_netip_optalk PASSED                                                                                         [  2%]
+tests/test_cobertura_final.py::test_camara_dvrip_fusion_doble_lente PASSED                                                                                          [  5%]
+tests/test_cobertura_final.py::test_escritor_video_fallback_opencv_si_falla_ffmpeg PASSED                                                                           [  7%]
+tests/test_cobertura_final.py::test_telegram_comandos_globales_estado_y_logs PASSED                                                                                 [ 10%]
+tests/test_cobertura_final.py::test_raton_seleccion_y_ampliacion_en_main PASSED                                                                                     [ 12%]
+tests/test_config_y_cifrado.py::test_cifrado_y_descifrado_secreto PASSED                                                                                            [ 15%]
+tests/test_config_y_cifrado.py::test_cifrado_ignora_placeholders_y_ya_cifrados PASSED                                                                               [ 17%]
+tests/test_config_y_cifrado.py::test_integridad_hmac_detecta_manipulacion PASSED                                                                                    [ 20%]
+tests/test_config_y_cifrado.py::test_codec_audio_alaw_ida_y_vuelta PASSED                                                                                           [ 23%]
+tests/test_config_y_cifrado.py::test_recarga_configuracion_en_caliente PASSED                                                                                       [ 25%]
+tests/test_edge_cases.py::test_correo_construye_mime_con_foto_adjunta PASSED                                                                                        [ 28%]
+tests/test_edge_cases.py::test_telegram_envio_multipart_foto PASSED                                                                                                 [ 30%]
+tests/test_edge_cases.py::test_camara_rtsp_ptz_onvif_stop_tras_mover PASSED                                                                                         [ 33%]
+tests/test_edge_cases.py::test_grabacion_continua_rotacion_de_bloques PASSED                                                                                        [ 35%]
+tests/test_edge_cases.py::test_gestor_mantenimiento_armado_y_desarmado_global PASSED                                                                                [ 38%]
+tests/test_mantenimiento_y_eventos.py::test_horario_franja_normal_y_nocturna PASSED                                                                                 [ 41%]
+tests/test_mantenimiento_y_eventos.py::test_limpieza_circular_disco_borra_mas_antiguos PASSED                                                                       [ 43%]
+tests/test_mantenimiento_y_eventos.py::test_grabador_eventos_prebuffer PASSED                                                                                       [ 46%]
+tests/test_netip_ptz_y_ui.py::test_protocolo_netip_login_y_luz_led PASSED                                                                                           [ 48%]
+tests/test_netip_ptz_y_ui.py::test_camara_dvrip_comandos_ptz_y_presets PASSED                                                                                       [ 51%]
+tests/test_netip_ptz_y_ui.py::test_escritor_video_h264_con_audio_aac PASSED                                                                                         [ 53%]
+tests/test_netip_ptz_y_ui.py::test_logger_captura_print_en_archivo PASSED                                                                                           [ 56%]
+tests/test_netip_ptz_y_ui.py::test_ui_dibujar_interfaz_y_panel PASSED                                                                                               [ 58%]
+tests/test_netip_ptz_y_ui.py::test_atajos_teclado_main PASSED                                                                                                       [ 61%]
+tests/test_notificaciones_y_audio.py::test_comandos_telegram_ptz_y_presets PASSED                                                                                   [ 64%]
+tests/test_notificaciones_y_audio.py::test_guardar_historial_movimiento PASSED                                                                                      [ 66%]
+tests/test_subida_cobertura.py::test_camara_base_ui_y_capturas PASSED                                                                                               [ 69%]
+tests/test_subida_cobertura.py::test_grabador_eventos_ciclo_completo_disparo_y_cierre PASSED                                                                        [ 71%]
+tests/test_subida_cobertura.py::test_camara_rtsp_presets_audio_y_bucle_video PASSED                                                                                 [ 74%]
+tests/test_subida_cobertura.py::test_camara_dvrip_callbacks_video_y_audio PASSED                                                                                    [ 76%]
+tests/test_subida_cobertura.py::test_correo_video_y_evento_dvrip PASSED                                                                                             [ 79%]
+tests/test_subida_cobertura.py::test_notificaciones_historial_y_mantenimiento_reglas PASSED                                                                         [ 82%]
+tests/test_video_y_correo.py::test_escritor_video_h264_crea_mp4_valido PASSED                                                                                       [ 84%]
+tests/test_video_y_correo.py::test_correo_intervalo_antispam PASSED                                                                                                 [ 87%]
+tests/test_video_y_correo.py::test_geometria_mosaico_main PASSED                                                                                                    [ 89%]
+tests/test_watchdog_y_camara_base.py::test_hash_xmeye_consistente PASSED                                                                                            [ 92%]
+tests/test_watchdog_y_camara_base.py::test_camara_base_zoom_digital PASSED                                                                                          [ 94%]
+tests/test_watchdog_y_camara_base.py::test_camara_base_deteccion_movimiento PASSED                                                                                  [ 97%]
+tests/test_watchdog_y_camara_base.py::test_watchdog_detecta_congelacion_y_reconecta PASSED                                                                          [100%]
+
+=========================================================================== 39 passed in 2.62s ===========================================================================
+Mensaje de prueba unitaria StiViHome
+
+
+
+
+
+
+
+
+
+
+
+pip install pytest-cov
+pytest --cov=. --cov-report=term-missing
+
+
+
+========================================================================== test session starts ===========================================================================
+platform win32 -- Python 3.15.0, pytest-9.2.0, pluggy-1.7.0
+rootdir: C:\Users\vicar.PORTATIL\Documents\CamarasIPVers2.0
+plugins: platformdirs-4.14.7, cov-7.1.0
+collected 39 items                                                                                                                                                        
+
+tests\test_cobertura_final.py .....                                                                                                                                 [ 12%]
+tests\test_config_y_cifrado.py .....                                                                                                                                [ 25%]
+tests\test_edge_cases.py .....                                                                                                                                      [ 38%]
+tests\test_mantenimiento_y_eventos.py ...                                                                                                                           [ 46%]
+tests\test_netip_ptz_y_ui.py ......                                                                                                                                 [ 61%]
+tests\test_notificaciones_y_audio.py ..                                                                                                                             [ 66%]
+tests\test_subida_cobertura.py ......                                                                                                                               [ 82%]
+tests\test_video_y_correo.py ...                                                                                                                                    [ 89%]
+tests\test_watchdog_y_camara_base.py ...¡ALERTA! Movimiento en Camara Prueba -> C:\Users\vicar.PORTATIL\AppData\Local\Temp\pytest-of-vicar\pytest-11\test_camara_base_deteccion_mov0\MOV_Camara_Prueba_20261118_194420.jpg
+.                                                                                                                           [100%]
+
+============================================================================= tests coverage =============================================================================
+____________________________________________________________ coverage: platform win32, python 3.15.0-final-0 _____________________________________________________________
+
+Name                                    Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------
+camara_base.py                            283     28    90%   98-99, 140-141, 161, 166, 203, 207, 213-214, 220-221, 224-226, 229, 262, 284-285, 300, 305-306, 350-352, 368-369, 428
+camaras.py                                355    175    51%   50-58, 62, 66, 74-75, 83, 87, 94-95, 103, 107, 115-116, 124-156, 169-170, 176-181, 188-191, 198-207, 226-253, 256-271, 276, 280-283, 291-294, 299-309, 318, 347, 351, 369-370, 379, 383, 399-400, 410, 414-422, 425-437, 444-445, 452-456, 460-468, 474-478, 483-484, 487-490
+config.py                                 208     19    91%   14, 28-35, 85-86, 227, 248-249, 258, 290, 295, 323-324
+configuracion.py                          263    263     0%   2-462
+correo_alertas.py                         132     29    78%   49-50, 61-62, 68-70, 81, 107-109, 115, 139, 159, 163, 167-168, 193-200, 212-214, 232-234
+escritor_video.py                          73     14    81%   46-47, 78-79, 85-86, 93, 106-107, 115-119
+escritor_videoviejo.py                     38     38     0%   2-73
+grabacion_eventos.py                       77      4    95%   39, 107-109
+logger.py                                  37      5    86%   31-35
+main.py                                   389    171    56%   57-58, 63-79, 90-106, 118-120, 161-168, 174-175, 291-292, 385-386, 441-443, 472-482, 487-526, 535, 557-565, 570-582, 588-676, 680
+mantenimiento.py                          136     38    72%   31-32, 34-35, 38, 59-60, 66, 80, 86-87, 90, 100, 107-108, 120-121, 133, 168-195
+notificaciones.py                         285    125    56%   95-97, 104, 110-129, 136, 164-166, 179-185, 190-193, 206-207, 211-213, 220, 232-233, 263, 280-283, 287-288, 290, 292, 309-311, 314-317, 322-323, 327-329, 332, 340-341, 346, 351, 353-354, 363-367, 372-373, 384-389, 392-397, 424-426, 429, 435, 441-473
+tests\__init__.py                           0      0   100%
+tests\test_cobertura_final.py             119      1    99%   60
+tests\test_config_y_cifrado.py             39      0   100%
+tests\test_edge_cases.py                  121      0   100%
+tests\test_mantenimiento_y_eventos.py      52      0   100%
+tests\test_netip_ptz_y_ui.py              121      0   100%
+tests\test_notificaciones_y_audio.py       32      0   100%
+tests\test_subida_cobertura.py            130      0   100%
+tests\test_video_y_correo.py               30      0   100%
+tests\test_watchdog_y_camara_base.py       55      0   100%
+watchdog.py                                63     23    63%   21-22, 26, 31, 37-38, 46, 53, 71-83, 87, 103-106
+---------------------------------------------------------------------
+TOTAL                                    3038    933    69%
+=========================================================================== 39 passed in 5.72s ===========================================================================
+Mensaje de prueba unitaria StiViHome

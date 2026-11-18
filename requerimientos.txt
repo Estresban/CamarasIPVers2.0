@@ -1,5 +1,15 @@
-opencv-python>=4.8.0
-numpy>=1.24.0
+# Procesamiento de vídeo, matrices y audio
+opencv-python>=4.10.0
+numpy>=2.0.0
 sounddevice>=0.4.6
+
+# Protocolos de cámaras IP (ONVIF y DVRIP/XMeye)
 onvif-zeep>=0.2.12
-python-dvrip>=0.1.3
+#python-dvrip>=0.1.3
+
+# Servidor Web y Base de Datos (próxima versión)
+flask>=3.0.0
+mysql-connector-python>=9.0.0
+
+# Pruebas automatizadas
+pytest>=8.0.0
