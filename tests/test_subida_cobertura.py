@@ -92,6 +92,7 @@ def test_camara_base_ui_y_capturas(tmp_path, monkeypatch):
     assert grab.writer is None
     mock_tg.assert_called_once()
     mock_mail.assert_called_once()'''
+    
 
 def test_grabador_eventos_ciclo_completo_disparo_y_cierre(tmp_path, monkeypatch):
     """Cubre el volcado del pre-buffer al detectar movimiento y el envío del clip al terminar."""
