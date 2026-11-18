@@ -66,12 +66,14 @@ def iniciar():
     tab_general = ttk.Frame(notebook, padding=16)
     tab_correo = ttk.Frame(notebook, padding=16)
     tab_historial = ttk.Frame(notebook, padding=16)
+    tab_mant = ttk.Frame(notebook, padding=16)
+    tab_acerca = ttk.Frame(notebook, padding=18)
+    notebook.add(tab_acerca, text="Acerca de")
     notebook.add(tab_historial, text="Historial")
     notebook.add(tab_camaras, text="Cámaras")
     notebook.add(tab_grabacion, text="Grabación y detección")
     notebook.add(tab_general, text="General")
     notebook.add(tab_correo, text="Correo electrónico")
-    tab_mant = ttk.Frame(notebook, padding=16)
     notebook.add(tab_mant, text="Mantenimiento")
 
     campos_camaras = []
@@ -298,6 +300,48 @@ def iniciar():
                              mant_guardado.get("hora_fin", "07:00"), ancho=20)
     ttk.Label(tab_mant, text="Nota: Soporta tramos nocturnos que cruzan medianoche (ej. 23:30 a 07:00). Se aplica en caliente sin reiniciar.",
               foreground="#b9c5d3", wraplength=560).pack(anchor="w", pady=(10, 4))
+    
+    
+    # --- PESTAÑA: ACERCA DE (DESARROLLADOR Y VERSIÓN) ---
+    
+    
+    marco_info = ttk.LabelFrame(tab_acerca, text="Información de la aplicación", padding=14)
+    marco_info.pack(fill="x", pady=(0, 12))
+
+    datos_app = [
+        ("Programa:", "Sistema de Videovigilancia StiVi-Home"),
+        ("Versión:", "2.0.0 (Build Multiplataforma Windows / Linux)"),
+        ("Desarrollador:", "StiVi-Home / Esteban Vicario"),
+        ("Licencia:", "Uso privado y doméstico"),
+        ("Motor de vídeo:", "Python + OpenCV + FFmpeg (H.264 / AAC)"),
+        ("Protocolos:", "RTSP/TCP, ONVIF, DVRIP / NetIP, SMTP SSL, Telegram Bot API"),
+    ]
+
+    for etiqueta, valor in datos_app:
+        fila_info = ttk.Frame(marco_info)
+        fila_info.pack(fill="x", pady=3)
+        ttk.Label(fila_info, text=etiqueta, width=18, font=("Segoe UI", 9, "bold")).pack(side="left")
+        ttk.Label(fila_info, text=valor, foreground="#b9c5d3").pack(side="left", fill="x", expand=True)
+
+    marco_desc = ttk.LabelFrame(tab_acerca, text="Descripción y capacidades", padding=14)
+    marco_desc.pack(fill="both", expand=True)
+
+    texto_descripcion = (
+        "Plataforma integral de videovigilancia en tiempo real diseñada para gestionar "
+        "cámaras IP estándar (RTSP/ONVIF) y cámaras de doble lente (DVRIP/XMeye).\n\n"
+        "• Grabación continua en bloques MP4 y grabación inteligente por movimiento con pre-buffer en RAM.\n"
+        "• Audio bidireccional en vivo y control PTZ motorizado desde interfaz local o Telegram.\n"
+        "• Alertas instantáneas con captura fotográfica y clips de vídeo por Telegram y correo electrónico.\n"
+        "• Supervisión automática de salud (Watchdog), limpieza circular de disco y cifrado local de credenciales."
+    )
+    ttk.Label(
+        marco_desc,
+        text=texto_descripcion,
+        foreground="#f1f4f8",
+        justify="left",
+        wraplength=600,
+    ).pack(anchor="w")
+
 
     def entero(entrada, nombre):
         try:
