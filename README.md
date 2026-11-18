@@ -1,5 +1,13 @@
 # 🛡️ Sistema de Videovigilancia StiVi-Home (`CamarasIPVers2.0`)
 
+
+[![Pruebas Automatizadas (Pytest)](https://github.com/Estresban/CamarasIPVers2.0/actions/workflows/tests.yml/badge.svg)](https://github.com/Estresban/CamarasIPVers2.0/actions/workflows/tests.yml)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-Compatible-blue?logo=windows)
+![Linux](https://img.shields.io/badge/Linux-Compatible-yellow?logo=linux)
+[![Repositorio](https://img.shields.io/badge/GitHub-CamarasIPVers2.0-black?logo=github)](https://github.com/Estresban/CamarasIPVers2.0)
+
+
 Sistema integral de videovigilancia multiplataforma (**Windows** y **Linux**) desarrollado en Python. Permite visualizar, controlar, grabar y supervisar cámaras IP estándar (**RTSP / ONVIF**) y cámaras de doble lente (**DVRIP / XMeye**) en tiempo real, con detección de movimiento, pre-buffer de vídeo, audio bidireccional y control remoto completo mediante **Bot de Telegram** y **alertas por correo electrónico**.
 
 ---
