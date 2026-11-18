@@ -195,7 +195,16 @@ class CamaraRTSP(CamaraBase):
     def cerrar(self):
         self.cerrar_base()
         if self.proceso_ffplay:
-            self.proceso_ffplay.terminate()
+            try:
+                self.proceso_ffplay.terminate()
+                self.proceso_ffplay.wait(timeout=1.5)
+            except Exception:
+                try:
+                    self.proceso_ffplay.kill()
+                except Exception:
+                    pass
+            finally:
+                self.proceso_ffplay = None
 
 
 class CamaraDVRIP(CamaraBase):
@@ -460,20 +469,23 @@ class CamaraDVRIP(CamaraBase):
 
     def cerrar(self):
         self.cerrar_base()
-        for cam in self.camaras_dvrip.values():
+        self._detener_procesos_ffmpeg()
+        for cam in list(self.camaras_dvrip.values()):
             try:
                 cam.stop_monitor()
                 cam.close()
             except Exception:
                 pass
+        self.camaras_dvrip.clear()
         if self.cam_control:
             try:
                 self.cam_control.close()
             except Exception:
                 pass
-        self._detener_procesos_ffmpeg()
-        for log in self.logs.values():
+            self.cam_control = None
+        for log in list(self.logs.values()):
             try:
                 log.close()
             except Exception:
                 pass
+        self.logs.clear()

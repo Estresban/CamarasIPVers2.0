@@ -430,10 +430,16 @@ class CamaraBase:
 
     def cerrar_base(self):
         self.detener = True
+        self.grabando = False
+        self.deteccion_activa = False
         self.escuchando_audio = False
         self.hablando_micro = False
         self.grabador_eventos.detener_y_limpiar()
+
+        writer_a_cerrar = None
         with self.lock:
-            if self.video_writer:
-                self.video_writer.release()
-                self.video_writer = None
+            writer_a_cerrar = self.video_writer
+            self.video_writer = None
+
+        if writer_a_cerrar is not None:
+            writer_a_cerrar.release()
