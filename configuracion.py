@@ -368,8 +368,13 @@ def iniciar():
                 "mantenimiento": datos_mant,
             }
             
-            with open(ARCHIVO_CONFIG, "w", encoding="utf-8") as archivo:
+            archivo_tmp = f"{ARCHIVO_CONFIG}.tmp"
+            with open(archivo_tmp, "w", encoding="utf-8") as archivo:
                 json.dump(datos, archivo, ensure_ascii=False, indent=4)
+                archivo.flush()
+                os.fsync(archivo.fileno())
+            os.replace(archivo_tmp, ARCHIVO_CONFIG)
+
             messagebox.showinfo("Configuración guardada",
                                 "Los cambios se han guardado. Reinicia la videovigilancia para aplicarlos.",
                                 parent=root)
