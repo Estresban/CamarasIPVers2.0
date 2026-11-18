@@ -565,10 +565,10 @@ def al_hacer_clic_panel(evento, x, y, camaras):
 def cerrar_camaras(camaras):
     """Detiene todas las cámaras de forma segura."""
     print("\n[MAIN] Cerrando cámaras...")
+    notificaciones.detener_bot()
     for camara in camaras:
         try:
             camara.cerrar()
-            notificaciones.detener_bot()
             print(f"[MAIN] {camara.nombre}: cerrada.")
         except Exception as exc:
             print(f"[MAIN] Error cerrando {camara.nombre}: {exc}")
