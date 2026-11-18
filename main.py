@@ -6,6 +6,7 @@ Interfaz principal para las cámaras RTSP y DVRIP.
 
 import math
 import os
+import subprocess
 import sys
 import threading
 import numpy as np
@@ -31,7 +32,6 @@ os.chdir(DIR_DATOS)
 
 import cv2
 from camaras import CamaraDVRIP, CamaraRTSP
-import configuracion
 import correo_alertas
 import notificaciones
 from watchdog import WatchdogCamaras
@@ -47,7 +47,7 @@ CAMARAS = []
 seleccionada = 0
 vista_ampliada = False
 salir_panel = False
-ventana_config_abierta = False
+proceso_config = None
 raton_panel = (-1, -1)
 
 
@@ -465,18 +465,20 @@ def dibujar_panel(indice_activo, camaras, mantenimiento=None):
     return panel
 
 
-def abrir_configuracion_hilo():
-    """Abre la ventana Tkinter sin bloquear el vídeo ni usar subprocess."""
-    global ventana_config_abierta
-    if ventana_config_abierta:
+def abrir_configuracion_proceso():
+    """Abre configuracion.py en un proceso independiente sin bloquear OpenCV."""
+    global proceso_config
+    if proceso_config is not None and proceso_config.poll() is None:
         return
-    ventana_config_abierta = True
     try:
-        configuracion.iniciar()
+        if getattr(sys, "frozen", False):
+            cmd = [sys.executable, "--config"]
+        else:
+            ruta_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "configuracion.py")
+            cmd = [sys.executable, ruta_script]
+        proceso_config = subprocess.Popen(cmd)
     except Exception as exc:
-        print(f"[CONFIG] Error en ventana de configuración: {exc}")
-    finally:
-        ventana_config_abierta = False
+        print(f"[CONFIG] Error abriendo ventana de configuración: {exc}")
 
 
 def ejecutar_accion_panel(accion, camaras):
@@ -490,7 +492,7 @@ def ejecutar_accion_panel(accion, camaras):
         correo_alertas.alternar_alertas_correo()
         return True
     if accion == "configuracion":
-        threading.Thread(target=abrir_configuracion_hilo, daemon=True).start()
+        abrir_configuracion_proceso()
         return True
     if not camaras or seleccionada >= len(camaras):
         return True
@@ -675,3 +677,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+# compilar .exe, añaderemos estas dos líneas para que reconozca el argumento --config
+
+'''if __name__ == "__main__":
+    if "--config" in sys.argv:
+        import configuracion
+        configuracion.iniciar()
+    else:
+        main()'''
