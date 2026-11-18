@@ -55,8 +55,8 @@ def iniciar():
     encabezado = ttk.Label(root, text="CONFIGURACIÓN DEL SISTEMA",
                            font=("Segoe UI", 16, "bold"))
     encabezado.pack(anchor="w", padx=18, pady=(16, 4))
-    ttk.Label(root, text="Los cambios de conexión se aplicarán al reiniciar el programa.",
-              foreground="#b9c5d3").pack(anchor="w", padx=18, pady=(0, 12))
+    ttk.Label(root, text="Sensibilidad, tiempos, mosaico, alertas y horarios se aplican al instante. Las IPs/usuarios requieren reiniciar.",
+              foreground="#b9c5d3", wraplength=660).pack(anchor="w", padx=18, pady=(0, 12))
 
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True, padx=16, pady=6)
@@ -305,7 +305,7 @@ def iniciar():
         except ValueError:
             raise ValueError(f"El campo '{nombre}' debe ser un número entero.")
 
-    def guardar():
+    def guardar(cerrar_al_guardar=False):
         try:
             lista_camaras = []
             for i, entradas in enumerate(campos_camaras):
@@ -375,9 +375,16 @@ def iniciar():
                 os.fsync(archivo.fileno())
             os.replace(archivo_tmp, ARCHIVO_CONFIG)
 
-            messagebox.showinfo("Configuración guardada",
-                                "Los cambios se han guardado. Reinicia la videovigilancia para aplicarlos.",
-                                parent=root)
+            messagebox.showinfo(
+                "Configuración guardada",
+                "Cambios guardados en config.json.\n\n"
+                "• Se aplican al instante (en <5s): sensibilidad, tiempos, mosaico, alertas, correo y horarios.\n"
+                "• Requieren reiniciar: cambios de IP, puertos, usuario o contraseña de las cámaras.",
+                parent=root,
+            )
+            if cerrar_al_guardar:
+                root.destroy()
+                
         except (ValueError, OSError) as exc:
             messagebox.showerror("No se pudo guardar", str(exc), parent=root)
 
@@ -396,7 +403,8 @@ def iniciar():
     pie.pack(fill="x")
     ttk.Button(pie, text="Restaurar valores", command=restaurar).pack(side="left")
     ttk.Button(pie, text="Cancelar", command=root.destroy).pack(side="right", padx=(8, 0))
-    ttk.Button(pie, text="Guardar", command=guardar).pack(side="right")
+    ttk.Button(pie, text="Aplicar", command=lambda: guardar(cerrar_al_guardar=False)).pack(side="right", padx=(8, 0))
+    ttk.Button(pie, text="Guardar", command=lambda: guardar(cerrar_al_guardar=True)).pack(side="right")
     root.mainloop()
 
 
