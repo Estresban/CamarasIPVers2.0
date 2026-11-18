@@ -4,6 +4,7 @@ import json
 import os
 import threading
 
+import config
 from config import (
     CARPETA_CAPTURAS,
     CARPETA_FOTOGRAMAS,
@@ -22,7 +23,13 @@ class GestorMantenimiento:
         self._evento_detener = threading.Event()
         self._ultimo_chequeo_disco = 0.0
         self._estado_horario_previo = None  # None, True (armado) o False (desarmado)
+        self._mtime_config = self._obtener_mtime_config()
 
+    def _obtener_mtime_config(self):
+        try:
+            return os.path.getmtime(RUTA_CONFIG_JSON)
+        except OSError:
+            return 0.0
     def iniciar(self):
         threading.Thread(target=self._bucle_mantenimiento, daemon=True).start()
         print("[MANTENIMIENTO] Servicio de limpieza de disco y horario iniciado.")
@@ -162,9 +169,15 @@ class GestorMantenimiento:
             return
 
         while not self._evento_detener.is_set():
+            mtime_actual = self._obtener_mtime_config()
+            if mtime_actual != self._mtime_config:
+                self._mtime_config = mtime_actual
+                if config.recargar_configuracion():
+                    print("[CONFIG] 🔄 Configuración recargada en caliente desde config.json.")
+
             reglas = self._leer_reglas()
 
-            # 1. Comprobar programación horaria cada 30 segundos
+            # 1. Comprobar programación horaria
             if reglas["horario_activo"]:
                 en_franja = self._esta_en_horario(reglas["hora_inicio"], reglas["hora_fin"])
                 if en_franja != self._estado_horario_previo:
@@ -179,4 +192,4 @@ class GestorMantenimiento:
                 self._ultimo_chequeo_disco = ahora_ts
                 self._limpiar_disco_si_excede(reglas["max_gb"])
 
-            self._evento_detener.wait(timeout=30.0)
+            self._evento_detener.wait(timeout=5.0)

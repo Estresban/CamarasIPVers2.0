@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 import sounddevice as sd
 
+import config
 from config import (
     ALTO_CELDA,
     ANCHO_CELDA,
@@ -116,13 +117,13 @@ class CamaraBase:
         th = cv2.dilate(th, None, iterations=2)
         contornos, _ = cv2.findContours(th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        umbral_escalado = SENSIBILIDAD_MOVIMIENTO / 4.0
+        umbral_escalado = config.SENSIBILIDAD_MOVIMIENTO / 4.0
         hay_movimiento = any(cv2.contourArea(c) > umbral_escalado for c in contornos)
         self.fondo_gris = cv2.addWeighted(self.fondo_gris, 0.95, gris, 0.05, 0)
 
         if hay_movimiento:
             ahora = time.time()
-            if (ahora - self.ultima_captura_mov) >= COOLDOWN_CAPTURA_SEG:
+            if (ahora - self.ultima_captura_mov) >= config.COOLDOWN_CAPTURA_SEG:
                 self.ultima_captura_mov = ahora
                 fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
                 ruta = os.path.join(CARPETA_CAPTURAS, f"MOV_{self.nombre_archivo}_{fecha_str}.jpg")
@@ -141,7 +142,7 @@ class CamaraBase:
                 return
 
             ahora = time.time()
-            if self.video_writer is None or (ahora - self.inicio_bloque) >= (MINUTOS_POR_BLOQUE_VIDEO * 60):
+            if self.video_writer is None or (ahora - self.inicio_bloque) >= (config.MINUTOS_POR_BLOQUE_VIDEO * 60):
                 if self.video_writer is not None:
                     self.video_writer.release()
                 fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -172,7 +173,7 @@ class CamaraBase:
         if not self.captura_auto_activa:
             return
         ahora = time.time()
-        if (ahora - self.ultimo_fotograma_auto) >= INTERVALO_FOTOGRAMA_AUTO_SEG:
+        if (ahora - self.ultimo_fotograma_auto) >= config.INTERVALO_FOTOGRAMA_AUTO_SEG:
             self.ultimo_fotograma_auto = ahora
             fecha_str = datetime.now().strftime("%Y%m%d_%H%M%S")
             ruta = os.path.join(CARPETA_FOTOGRAMAS, f"AUTO_{self.nombre_archivo}_{fecha_str}.jpg")

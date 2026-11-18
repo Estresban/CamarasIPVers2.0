@@ -10,7 +10,7 @@ import urllib.parse
 import cv2
 from logger import RUTA_LOG
 
-
+import config
 from config import DIR_DATOS, TELEGRAM_CHAT_ID, TELEGRAM_TOKEN
 import correo_alertas
 
@@ -98,8 +98,8 @@ def alternar_alertas():
 
 
 def _obtener_credenciales():
-    token = str(TELEGRAM_TOKEN).strip()
-    chat_id = str(TELEGRAM_CHAT_ID).strip()
+    token = str(config.TELEGRAM_TOKEN).strip()
+    chat_id = str(config.TELEGRAM_CHAT_ID).strip()
     if not token or not chat_id or token == "TU_TOKEN_TELEGRAM":
         return None, None
     return token, chat_id

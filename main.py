@@ -11,6 +11,7 @@ import sys
 import threading
 import numpy as np
 
+import config
 from config import (
     ALTO_CELDA,
     ALTO_TOTAL_BASE,
@@ -97,7 +98,7 @@ def dibujar_interfaz(camaras, indice_activo):
                     (30, 360), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2, cv2.LINE_AA
                 )
             lienzo = cv2.resize(imagen, (ANCHO_TOTAL_BASE, ALTO_TOTAL_BASE), interpolation=cv2.INTER_LINEAR)
-            if vista_ampliada and MODO_MOSAICO > 1:
+            if vista_ampliada and config.MODO_MOSAICO > 1:
                 cv2.putText(
                     lienzo, "[DOBLE CLIC / ENTER: Volver al mosaico]",
                     (16, ALTO_TOTAL_BASE - 16), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 255), 2, cv2.LINE_AA
@@ -150,7 +151,7 @@ def obtener_geometria_mosaico():
     """Devuelve (cols, filas, ancho_celda, alto_celda) para mosaicos de 1, 2 o 4 cámaras."""
     if vista_ampliada or MODO_MOSAICO == 1:
         return 1, 1, ANCHO_TOTAL_BASE, ALTO_TOTAL_BASE
-    if MODO_MOSAICO == 2:
+    if config.MODO_MOSAICO == 2:
         return 2, 1, ANCHO_TOTAL_BASE // 2, ALTO_TOTAL_BASE
     return 2, 2, ANCHO_CELDA, ALTO_CELDA
 
@@ -530,7 +531,7 @@ def al_hacer_clic_camaras(evento, x, y, camaras):
     global seleccionada, vista_ampliada
 
     if evento == cv2.EVENT_LBUTTONDBLCLK:
-        if MODO_MOSAICO == 1:
+        if config.MODO_MOSAICO == 1:
             return
         if vista_ampliada:
             vista_ampliada = False

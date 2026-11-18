@@ -194,6 +194,56 @@ CARPETAS_SALIDA = (
 for carpeta in CARPETAS_SALIDA:
     os.makedirs(carpeta, exist_ok=True)
 
+# ==============================================================================
+# RECARGAR EN CALIENTE
+# ===================================================================
+
+def recargar_configuracion():
+    """Actualiza en caliente los parámetros y credenciales desde config.json."""
+    global TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
+    global MINUTOS_POR_BLOQUE_VIDEO, SENSIBILIDAD_MOVIMIENTO
+    global COOLDOWN_CAPTURA_SEG, INTERVALO_FOTOGRAMA_AUTO_SEG
+    global MODO_MOSAICO, DISPOSITIVO_SALIDA_AUDIO
+    global EMAIL_ACTIVO, EMAIL_ADJUNTAR_FOTO, EMAIL_REMITENTE
+    global EMAIL_PASSWORD, EMAIL_DESTINATARIO, EMAIL_SMTP_SERVIDOR
+    global EMAIL_SMTP_PUERTO, EMAIL_INTERVALO_ALERTAS
+
+    if not os.path.exists(RUTA_CONFIG_JSON):
+        return False
+    try:
+        with open(RUTA_CONFIG_JSON, "r", encoding="utf-8") as f:
+            guardados = json.load(f)
+        if not isinstance(guardados, dict):
+            return False
+
+        TELEGRAM_TOKEN = guardados.get("telegram_token", TELEGRAM_TOKEN)
+        TELEGRAM_CHAT_ID = guardados.get("telegram_chat_id", TELEGRAM_CHAT_ID)
+        DISPOSITIVO_SALIDA_AUDIO = guardados.get("dispositivo_salida_audio", DISPOSITIVO_SALIDA_AUDIO)
+
+        params = guardados.get("parametros", {})
+        if isinstance(params, dict):
+            MINUTOS_POR_BLOQUE_VIDEO = params.get("minutos_por_bloque_video", MINUTOS_POR_BLOQUE_VIDEO)
+            SENSIBILIDAD_MOVIMIENTO = params.get("sensibilidad_movimiento", SENSIBILIDAD_MOVIMIENTO)
+            COOLDOWN_CAPTURA_SEG = params.get("cooldown_captura_seg", COOLDOWN_CAPTURA_SEG)
+            INTERVALO_FOTOGRAMA_AUTO_SEG = params.get("intervalo_fotograma_auto_seg", INTERVALO_FOTOGRAMA_AUTO_SEG)
+            nuevo_mosaico = int(params.get("modo_mosaico", MODO_MOSAICO))
+            if nuevo_mosaico in (1, 2, 4):
+                MODO_MOSAICO = nuevo_mosaico
+
+        email = guardados.get("email", {})
+        if isinstance(email, dict):
+            EMAIL_ACTIVO = email.get("activo", EMAIL_ACTIVO)
+            EMAIL_ADJUNTAR_FOTO = email.get("adjuntar_foto", EMAIL_ADJUNTAR_FOTO)
+            EMAIL_REMITENTE = email.get("remitente", EMAIL_REMITENTE)
+            EMAIL_PASSWORD = email.get("password", EMAIL_PASSWORD)
+            EMAIL_DESTINATARIO = email.get("destinatario", EMAIL_DESTINATARIO)
+            EMAIL_SMTP_SERVIDOR = email.get("smtp_servidor", EMAIL_SMTP_SERVIDOR)
+            EMAIL_SMTP_PUERTO = email.get("smtp_puerto", EMAIL_SMTP_PUERTO)
+            EMAIL_INTERVALO_ALERTAS = email.get("intervalo_alertas", EMAIL_INTERVALO_ALERTAS)
+
+        return True
+    except (OSError, ValueError, json.JSONDecodeError):
+        return False
 
 # ==============================================================================
 # FUNCIONES AUXILIARES COMPARTIDAS (CIFRADO Y AUDIO G.711 A-LAW)
