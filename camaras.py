@@ -312,13 +312,15 @@ class CamaraDVRIP(CamaraBase):
                 raw = bytes(buffer[:n])
                 del buffer[:n]
                 img = np.frombuffer(raw, dtype=np.uint8).reshape((ALTO_LENTE_DVRIP, ANCHO_CELDA, 3)).copy()
+                combinado = None
                 with self.lock:
                     self.ultima_lente[canal] = img
                     sup, inf = self.ultima_lente.get(1), self.ultima_lente.get(0)
                     if sup is not None and inf is not None:
                         combinado = np.vstack((sup, inf)).astype(np.uint8, copy=False)
-                        # Se procesa en el hilo decodificador, nunca en la UI
-                        self._procesar_nuevo_fotograma(combinado)
+                if combinado is not None:       
+                    # Se procesa en el hilo decodificador, nunca en la UI
+                    self._procesar_nuevo_fotograma(combinado)
    
                         
     def mover_ptz(self, pan=0.0, tilt=0.0, zoom=0.0):
