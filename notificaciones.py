@@ -357,64 +357,62 @@ def _procesar_comando(texto, camaras):
 
     # 5. Comandos individuales o globales (/foto1..4, /grabar1..4, /deteccion1..4, /prebuffer1..4, /luz1..4)
     coincidencia = re.match(r"^/(foto|grabar|deteccion|prebuffer|luz)(\d+)?$", cmd)
-    if not coincidencia:
-        enviar_mensaje_telegram("❓ Comando no reconocido. Pulsa /start para actualizar los botones.")
+    if coincidencia:
+        accion, num_str = coincidencia.groups()
+        if num_str is not None:
+            idx = int(num_str) - 1
+            if idx < 0 or idx >= len(camaras):
+                enviar_mensaje_telegram(f"⚠️ La cámara {num_str} no existe (hay {len(camaras)} cámaras).")
+                return
+            objetivos = [camaras[idx]]
+        else:
+            objetivos = camaras
+
+        if accion == "foto":
+            for c in objetivos:
+                _enviar_captura_camara(c, prefijo="📷")
+
+        elif accion == "grabar":
+            respuestas = []
+            for c in objetivos:
+                c.alternar_grabacion()
+                estado = "INICIADA 🔴" if c.grabando else "DETENIDA ⏹️"
+                respuestas.append(f"🎥 {c.nombre}: Grabación {estado}")
+            enviar_mensaje_telegram("\n".join(respuestas))
+
+        elif accion == "deteccion":
+            respuestas = []
+            for c in objetivos:
+                c.alternar_deteccion()
+                estado = "ACTIVADA 🟢" if c.deteccion_activa else "DESACTIVADA ⚪"
+                respuestas.append(f"👁️ {c.nombre}: Detección {estado}")
+            enviar_mensaje_telegram("\n".join(respuestas))
+
+        elif accion == "prebuffer":
+            respuestas = []
+            for c in objetivos:
+                c.alternar_grab_movimiento()
+                estado = "ACTIVADO 🟢" if c.grabador_eventos.activa else "DESACTIVADO ⚪"
+                respuestas.append(f"🎬 {c.nombre}: Pre-buffer {estado}")
+            enviar_mensaje_telegram("\n".join(respuestas))
+
+        elif accion == "luz":
+            ciclo = {"AUTO": "BLANCA", "BLANCA": "IR", "IR": "AUTO"}
+            nombres_bonitos = {
+                "BLANCA": "Luz BLANCA ☀️",
+                "IR": "Infrarrojos (IR) 🌙",
+                "AUTO": "Luz AUTOMÁTICA 🔄",
+            }
+            respuestas = []
+            for c in objetivos:
+                actual = str(c.modo_luz_actual).upper()
+                siguiente = ciclo.get(actual, "BLANCA")
+                c.cambiar_luz_led(siguiente)
+                respuestas.append(f"💡 {c.nombre}: {nombres_bonitos[siguiente]}")
+            enviar_mensaje_telegram("\n".join(respuestas))
         return
 
-    accion, num_str = coincidencia.groups()
-    if num_str is not None:
-        idx = int(num_str) - 1
-        if idx < 0 or idx >= len(camaras):
-            enviar_mensaje_telegram(f"⚠️ La cámara {num_str} no existe (hay {len(camaras)} cámaras).")
-            return
-        objetivos = [camaras[idx]]
-    else:
-        objetivos = camaras
-
-    if accion == "foto":
-        for c in objetivos:
-            _enviar_captura_camara(c, prefijo="📷")
-
-    elif accion == "grabar":
-        respuestas = []
-        for c in objetivos:
-            c.alternar_grabacion()
-            estado = "INICIADA 🔴" if c.grabando else "DETENIDA ⏹️"
-            respuestas.append(f"🎥 {c.nombre}: Grabación {estado}")
-        enviar_mensaje_telegram("\n".join(respuestas))
-
-    elif accion == "deteccion":
-        respuestas = []
-        for c in objetivos:
-            c.alternar_deteccion()
-            estado = "ACTIVADA 🟢" if c.deteccion_activa else "DESACTIVADA ⚪"
-            respuestas.append(f"👁️ {c.nombre}: Detección {estado}")
-        enviar_mensaje_telegram("\n".join(respuestas))
-
-    elif accion == "prebuffer":
-        respuestas = []
-        for c in objetivos:
-            c.alternar_grab_movimiento()
-            estado = "ACTIVADO 🟢" if c.grabador_eventos.activa else "DESACTIVADO ⚪"
-            respuestas.append(f"🎬 {c.nombre}: Pre-buffer {estado}")
-        enviar_mensaje_telegram("\n".join(respuestas))
-
-    elif accion == "luz":
-        ciclo = {"AUTO": "BLANCA", "BLANCA": "IR", "IR": "AUTO"}
-        nombres_bonitos = {
-            "BLANCA": "Luz BLANCA ☀️",
-            "IR": "Infrarrojos (IR) 🌙",
-            "AUTO": "Luz AUTOMÁTICA 🔄",
-        }
-        respuestas = []
-        for c in objetivos:
-            actual = str(c.modo_luz_actual).upper()
-            siguiente = ciclo.get(actual, "BLANCA")
-            c.cambiar_luz_led(siguiente)
-            respuestas.append(f"💡 {c.nombre}: {nombres_bonitos[siguiente]}")
-        enviar_mensaje_telegram("\n".join(respuestas))
-        
-    # Presets PTZ (/preset1..9 para ir, /setpreset1..9 para guardar)
+    # 6. Presets PTZ (/preset1..9 para ir, /setpreset1..9 para guardar)
     match_preset = re.match(r"^/(set)?preset(\d+)$", cmd)
     if match_preset:
         guardar, num_str = match_preset.groups()
@@ -427,6 +425,8 @@ def _procesar_comando(texto, camaras):
             time.sleep(1.5)
             _enviar_captura_camara(cam_activa, prefijo=f"📍 Punto {num_preset} |")
         return
+
+    enviar_mensaje_telegram("❓ Comando no reconocido. Pulsa /start para actualizar los botones.")
 
 
 def detener_bot():
