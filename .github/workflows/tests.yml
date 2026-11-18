@@ -1,0 +1,35 @@
+name: Pruebas Automatizadas (Pytest)
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  ejecutar-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar FFmpeg y librerías de sistema (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg libportaudio2 python3-tk
+
+      - name: Instalar dependencias de Python y pytest
+        run: |
+          python -m pip install --upgrade pip
+          pip install opencv-python-headless numpy sounddevice onvif-zeep flask mysql-connector-python pytest pytest-cov
+          cp -n config.example.py config.py || true
+
+      - name: Ejecutar batería de 39 tests con cobertura
+        run: |
+          pytest -v --cov=. --cov-omit="configuracion.py,escritor_videoviejo.py,tests/*" --cov-report=term-missing
