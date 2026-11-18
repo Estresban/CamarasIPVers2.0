@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 from config import (
-    RUTA_BASE, DIR_DATOS,
+    RUTA_BASE, DIR_DATOS, cifrar_secreto,
     CONFIG_CAMARAS_RTSP, CONFIG_PATIO, MINUTOS_POR_BLOQUE_VIDEO,
     SENSIBILIDAD_MOVIMIENTO, COOLDOWN_CAPTURA_SEG,
     INTERVALO_FOTOGRAMA_AUTO_SEG, DISPOSITIVO_SALIDA_AUDIO,
@@ -312,6 +312,7 @@ def iniciar():
                 original = dict(camaras_guardadas[i])
                 for clave, entrada in entradas.items():
                     original[clave] = entrada.get().strip()
+                original["password"] = cifrar_secreto(original["password"])
                 for clave in ("puerto_rtsp", "puerto_onvif", "puerto_netip", "canal", "stream"):
                     original[clave] = entero(entradas[clave], clave)
                 lista_camaras.append(original)
@@ -319,6 +320,7 @@ def iniciar():
             patio = dict(patio_guardado)
             for clave, entrada in entradas_patio.items():
                 patio[clave] = entrada.get().strip()
+            patio["password"] = cifrar_secreto(patio["password"])
             patio["puerto_netip"] = entero(entradas_patio["puerto_netip"], "Puerto NetIP patio")
             try:
                 patio["canales"] = tuple(int(x.strip()) for x in canales.get().split(",") if x.strip())
@@ -349,7 +351,7 @@ def iniciar():
                 "activo": bool(var_email_activo.get()),
                 "adjuntar_foto": bool(var_email_adjuntar.get()),
                 "remitente": entrada_email_rem.get().strip(),
-                "password": entrada_email_pass.get().strip(),
+                "password": cifrar_secreto(entrada_email_pass.get().strip()),
                 "destinatario": entrada_email_dest.get().strip(),
                 "smtp_servidor": entrada_email_smtp.get().strip(),
                 "smtp_puerto": entero(entrada_email_puerto, "Puerto SMTP (SSL)"),
@@ -362,7 +364,7 @@ def iniciar():
                 "parametros": parametros,
                 "carpetas": {k: v.get().strip() for k, v in entradas_carpetas.items()},
                 "dispositivo_salida_audio": dispositivo,
-                "telegram_token": entrada_token.get().strip(),
+                "telegram_token": cifrar_secreto(entrada_token.get().strip()),
                 "telegram_chat_id": entrada_chat.get().strip(),
                 "email": datos_email,
                 "mantenimiento": datos_mant,

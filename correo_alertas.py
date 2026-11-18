@@ -18,6 +18,7 @@ from config import (
     EMAIL_SMTP_PUERTO,
     EMAIL_SMTP_SERVIDOR,
     RUTA_CONFIG_JSON,
+    descifrar_secreto,
 )
 
 email_alertas_activas = EMAIL_ACTIVO
@@ -44,6 +45,7 @@ def _obtener_config_email():
                 guardados = json.load(f)
             if isinstance(guardados, dict) and isinstance(guardados.get("email"), dict):
                 cfg.update(guardados["email"])
+                cfg["password"] = descifrar_secreto(cfg["password"])
         except (OSError, json.JSONDecodeError):
             pass
     return cfg
