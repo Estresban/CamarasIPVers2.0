@@ -60,7 +60,7 @@ def test_camara_base_ui_y_capturas(tmp_path, monkeypatch):
     cam.cerrar_base()
 
 
-def test_grabador_eventos_ciclo_completo_disparo_y_cierre(tmp_path, monkeypatch):
+'''def test_grabador_eventos_ciclo_completo_disparo_y_cierre(tmp_path, monkeypatch):
     """Cubre el volcado del pre-buffer al detectar movimiento y el envío del clip al terminar."""
     monkeypatch.setattr("grabacion_eventos.CARPETA_GRABACIONES", str(tmp_path))
     mock_tg = MagicMock()
@@ -85,6 +85,36 @@ def test_grabador_eventos_ciclo_completo_disparo_y_cierre(tmp_path, monkeypatch)
     grab.procesar_audio(b"\x00" * 320)
 
     # Simulamos que ya pasó el tiempo post-evento para forzar cierre y envío
+    grab.fin_grabacion = time.time() - 1.0
+    grab.procesar_frame(frame, hay_movimiento=False)
+
+    assert grab.grabando_ahora is False
+    assert grab.writer is None
+    mock_tg.assert_called_once()
+    mock_mail.assert_called_once()'''
+
+def test_grabador_eventos_ciclo_completo_disparo_y_cierre(tmp_path, monkeypatch):
+    """Cubre el volcado del pre-buffer al detectar movimiento y el envío del clip al terminar."""
+    monkeypatch.setattr("grabacion_eventos.CARPETA_GRABACIONES", str(tmp_path))
+    monkeypatch.setattr("grabacion_eventos.EscritorVideoH264", MagicMock())
+    mock_tg = MagicMock()
+    mock_mail = MagicMock()
+    monkeypatch.setattr("grabacion_eventos.enviar_video_evento", mock_tg)
+    monkeypatch.setattr("grabacion_eventos.enviar_video_correo", mock_mail)
+
+    grab = GrabadorEventos("Entrada", seg_prebuffer=1, seg_postevento=1, fps=10.0)
+    grab.alternar()
+
+    frame = np.zeros((config.ALTO_CELDA, config.ANCHO_CELDA, 3), dtype=np.uint8)
+    for _ in range(5):
+        grab.procesar_frame(frame, hay_movimiento=False)
+
+    grab.procesar_frame(frame, hay_movimiento=True)
+    assert grab.grabando_ahora is True
+    assert grab.writer is not None
+
+    grab.procesar_audio(b"\x00" * 320)
+
     grab.fin_grabacion = time.time() - 1.0
     grab.procesar_frame(frame, hay_movimiento=False)
 
