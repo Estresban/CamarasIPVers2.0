@@ -89,8 +89,10 @@ class CamaraBase:
         if not self.deteccion_activa:
             return False
 
-        gris = cv2.GaussianBlur(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), (21, 21), 0)
-        if self.fondo_gris is None:
+        # Reducimos a la mitad (4x menos píxeles) para ahorrar CPU sin perder precisión
+        pequeno = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5, interpolation=cv2.INTER_AREA)
+        gris = cv2.GaussianBlur(cv2.cvtColor(pequeno, cv2.COLOR_BGR2GRAY), (15, 15), 0)
+        if self.fondo_gris is None or self.fondo_gris.shape != gris.shape:
             self.fondo_gris = gris
             return False
 
@@ -99,7 +101,8 @@ class CamaraBase:
         th = cv2.dilate(th, None, iterations=2)
         contornos, _ = cv2.findContours(th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        hay_movimiento = any(cv2.contourArea(c) > SENSIBILIDAD_MOVIMIENTO for c in contornos)
+        umbral_escalado = SENSIBILIDAD_MOVIMIENTO / 4.0
+        hay_movimiento = any(cv2.contourArea(c) > umbral_escalado for c in contornos)
         self.fondo_gris = cv2.addWeighted(self.fondo_gris, 0.95, gris, 0.05, 0)
 
         if hay_movimiento:
