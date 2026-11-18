@@ -68,13 +68,17 @@ def iniciar():
     tab_historial = ttk.Frame(notebook, padding=16)
     tab_mant = ttk.Frame(notebook, padding=16)
     tab_acerca = ttk.Frame(notebook, padding=18)
-    notebook.add(tab_acerca, text="Acerca de")
-    notebook.add(tab_historial, text="Historial")
+    notebook.add(tab_general, text="General")
     notebook.add(tab_camaras, text="Cámaras")
     notebook.add(tab_grabacion, text="Grabación y detección")
-    notebook.add(tab_general, text="General")
     notebook.add(tab_correo, text="Correo electrónico")
     notebook.add(tab_mant, text="Mantenimiento")
+    notebook.add(tab_historial, text="Historial")
+    notebook.add(tab_acerca, text="Acerca de")
+    
+    
+    
+    
 
     campos_camaras = []
 
