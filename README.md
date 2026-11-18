@@ -237,7 +237,9 @@ python-dvrip>=0.1.3
 ```
 
 #### Notas importantes de instalación
-* **Módulos incluidos en Python:** `tkinter`, `json`, `smtplib`, `http.client`, `logging`, `hashlib`, `hmac`, `uuid` y `subprocess` forman parte de la librería estándar de Python y no deben incluirse en `requirements.txt`.
+* **Módulos incluidos en Python:**  
+`tkinter`, `json`, `smtplib`, `http.client`, `logging`, `hashlib`, `hmac`, `uuid` y `subprocess`   
+forman parte de la librería estándar de Python y no deben incluirse en `requirements.txt`.
 * **En Linux (Ubuntu/Debian):** Si `tkinter` o `sounddevice` dan error al instalar o ejecutar, instala los paquetes de sistema correspondientes antes de ejecutar `pip install -r requirements.txt`:
   ```bash
   sudo apt update && sudo apt install -y python3-tk libportaudio2 ffmpeg
