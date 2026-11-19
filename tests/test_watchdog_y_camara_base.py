@@ -1,5 +1,5 @@
 import time
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import cv2
 import numpy as np
 
@@ -94,3 +94,74 @@ def test_watchdog_detecta_congelacion_y_reconecta():
     wd._bucle_vigilancia()
     time.sleep(0.05)  # Damos margen al hilo daemon de forzar_reconexion
     cam.forzar_reconexion.assert_called_once()
+    
+
+
+
+def test_watchdog_firma_rapida():
+    wd = WatchdogCamaras([])
+    assert wd._firma_rapida(None) is None
+    frame = np.ones((64, 64, 3), dtype=np.uint8) * 10
+    assert wd._firma_rapida(frame) == 120  # 2x2x3 * 10
+
+
+def test_watchdog_ciclo_completo_caida_alerta_y_recuperacion():
+    cam_activa = MagicMock()
+    cam_activa.nombre = "Cam1"
+    cam_activa.detener = False
+    frame_a = np.zeros((64, 64, 3), dtype=np.uint8)
+    frame_b = np.ones((64, 64, 3), dtype=np.uint8) * 255
+    cam_activa.frame = frame_a
+
+    cam_detenida = MagicMock()
+    cam_detenida.detener = True
+
+    wd = WatchdogCamaras(
+        [cam_activa, cam_detenida],
+        timeout_seg=5.0,
+        intervalo_revision=1.0,
+        umbral_alerta_seg=60.0,
+    )
+
+    tiempos = [100.0, 106.0, 170.0, 230.0]
+
+    def simular_tiempo():
+        if len(tiempos) == 1:
+            cam_activa.frame = frame_b
+        return tiempos.pop(0) if tiempos else 235.0
+
+    llamadas_wait = {"n": 0}
+
+    def simular_wait(timeout=None):
+        llamadas_wait["n"] += 1
+        if llamadas_wait["n"] >= 5:
+            wd.cerrar()  # Activa el evento real para romper el while
+            return True
+        return False
+
+    with patch("watchdog.time.time", side_effect=simular_tiempo), \
+         patch.object(wd._evento_detener, "wait", side_effect=simular_wait), \
+         patch("watchdog.notificaciones.alertas_activas", True), \
+         patch("watchdog.notificaciones.enviar_mensaje_telegram") as mock_tg, \
+         patch("watchdog.threading.Thread") as mock_thread:
+
+        mock_thread.side_effect = lambda target, args=(), daemon=True: MagicMock(
+            start=lambda: target(*args)
+        )
+        wd._bucle_vigilancia()
+
+    assert cam_activa.forzar_reconexion.called
+    assert mock_tg.call_count == 2
+    assert "FALLO DE SALUD" in mock_tg.call_args_list[0][0][0]
+    assert "CÁMARA RECUPERADA" in mock_tg.call_args_list[1][0][0]
+
+
+
+def test_watchdog_iniciar_y_cerrar():
+    wd = WatchdogCamaras([])
+    with patch("watchdog.threading.Thread") as mock_th:
+        wd.iniciar()
+        assert mock_th.called
+    wd.cerrar()
+    assert wd._evento_detener.is_set()
+
