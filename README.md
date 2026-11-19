@@ -222,7 +222,7 @@ pyinstaller --noconsole --onedir --name "StiViHome_CCTV" main.py
 
 
 ### Instalación de Dependencias Python
-Crea un entorno virtual e instala las librerías listadas en `requirements.txt`:
+Crea un entorno virtual e instala las librerías listadas en `requerimientos.txt`:
 
 ```bash
 python -m venv venv
@@ -231,25 +231,81 @@ venv\Scripts\activate
 # En Linux:
 source venv/bin/activate
 
-pip install -r requirements.txt
+pip install -r requerimientos.txt
 ```
 
-Contenido del archivo `requirements.txt`:
+Contenido del archivo `requerimientos.txt`:
 
 ```text
 opencv-python>=4.8.0
 numpy>=1.24.0
 sounddevice>=0.4.6
 onvif-zeep>=0.2.12
-python-dvrip>=0.1.3
+#python-dvrip>=0.1.3
 ```
 
 #### Notas importantes de instalación
 * **Módulos incluidos en Python:**  
 `tkinter`, `json`, `smtplib`, `http.client`, `logging`, `hashlib`, `hmac`, `uuid` y `subprocess`   
-forman parte de la librería estándar de Python y no deben incluirse en `requirements.txt`.
+forman parte de la librería estándar de Python y no deben incluirse en `requerimientos.txt`.
 * **En Linux (Ubuntu/Debian):** Si `tkinter` o `sounddevice` dan error al instalar o ejecutar, instala los paquetes de sistema correspondientes antes de ejecutar `pip install -r requirements.txt`:
   ```bash
   sudo apt update && sudo apt install -y python3-tk libportaudio2 ffmpeg
   ```
 * **Dependencia externa obligatoria:** Asegúrate de tener `ffmpeg` y `ffplay` instalados y accesibles en el `PATH` del sistema (no se instalan vía `pip`).
+
+### Instalación de `ffmpeg` y `ffplay` en el `PATH` del sistema
+
+`ffmpeg` y `ffplay` son binarios nativos escritos en C/C++, por lo que no se instalan mediante `pip`. Deben instalarse a nivel del sistema operativo y añadirse al `PATH` para que librerías de Python (como `pydub`, `moviepy` o `subprocess`) puedan ejecutarlos automáticamente.
+
+### Windows (Método rápido con terminal)
+
+Abre **PowerShell** o **Símbolo del sistema (CMD)** como administrador y ejecuta:
+
+```powershell
+winget install Gyan.FFmpeg
+```
+
+* **Nota:** `winget` descarga el paquete completo (incluye `ffmpeg.exe`, `ffplay.exe` y `ffprobe.exe`) y los añade automáticamente al `PATH`.
+* **Importante:** Cierra y vuelve a abrir tu terminal o editor de código (VS Code, PyCharm) para que reconozca los nuevos comandos.
+
+### Linux (Ubuntu / Debian)
+
+Abre la terminal y ejecuta:
+
+```bash
+sudo apt update && sudo apt install ffmpeg
+```
+
+> El paquete estándar de los repositorios de Ubuntu/Debian ya incluye tanto `ffmpeg` como `ffplay` listos en `/usr/bin/`.
+
+### Cómo comprobar la instalación
+
+Abre una terminal nueva (o dentro de tu entorno virtual de Python) y ejecuta:
+
+```bash
+ffmpeg -version
+ffplay -version
+```
+
+Si ambos comandos muestran la versión instalada sin errores, ya están accesibles en el `PATH` para cualquier script de Python.
+
+### Windows (Instalación manual sin `winget`)
+
+1. **Descargar los binarios:**
+   * Ve a la página oficial de compilaciones para Windows de Gyan (`https://gyan.dev`).
+   * Descarga el archivo **`ffmpeg-release-essentials.zip`** (en la sección *Release builds*).
+
+2. **Extraer los archivos:**
+   * Descomprime el contenido del `.zip` y renombra la carpeta resultante a `ffmpeg`.
+   * Mueve esa carpeta a la raíz de tu disco duro para que la ruta quede así: `C:\ffmpeg` (dentro debe existir la subcarpeta `C:\ffmpeg\bin` con `ffmpeg.exe`, `ffplay.exe` y `ffprobe.exe`).
+
+3. **Añadir al `PATH` del sistema:**
+   * Pulsa la tecla **Windows**, escribe `variables de entorno` y abre **Editar las variables de entorno del sistema**.
+   * Haz clic en el botón **Variables de entorno...** (abajo a la derecha).
+   * En la sección **Variables del sistema** (o *Variables de usuario*), busca y selecciona **`Path`** y pulsa **Editar...**.
+   * Haz clic en **Nuevo**, escribe `C:\ffmpeg\bin` y pulsa **Aceptar** en todas las ventanas para guardar.
+
+4. **Aplicar cambios:**
+   * Cierra por completo cualquier terminal o editor de código (VS Code, PyCharm) que tuvieras abierto y vuelve a abrirlo para cargar el nuevo `PATH`.
+
