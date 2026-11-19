@@ -155,8 +155,8 @@ def test_watchdog_ciclo_completo_caida_alerta_y_recuperacion():
 
     assert cam_activa.forzar_reconexion.called
     assert mock_salud.call_count == 2
-    assert "FALLO DE SALUD" in mock_salud.call_args_list
-    assert "CÁMARA RECUPERADA" in mock_salud.call_args_list
+    assert "FALLO DE SALUD" in str(mock_salud.call_args_list)
+    assert "CÁMARA RECUPERADA" in str(mock_salud.call_args_list)
 
 
 
