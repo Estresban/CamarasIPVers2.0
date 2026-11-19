@@ -19,17 +19,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Instalar FFmpeg ligero
+      - name: Instalar dependencias del sistema (FFmpeg, Audio y Pantalla Virtual)
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ffmpeg libportaudio2
+          sudo apt-get install -y --no-install-recommends ffmpeg libportaudio2 xvfb xauth
 
       - name: Instalar dependencias de Python y pytest
         run: |
           python -m pip install --upgrade pip
           pip install opencv-python-headless numpy sounddevice onvif-zeep flask mysql-connector-python pytest pytest-cov
 
-      - name: Ejecutar batería de 39 tests con cobertura
+      - name: Ejecutar batería de tests con cobertura
         run: |
-          pytest -v -s --durations=0 --cov=. --cov-report=term-missing
-
+          xvfb-run -a pytest -v -s --durations=0 --cov=. --cov-report=term-missing
