@@ -1,7 +1,5 @@
 [run]
 omit =
-    configuracion.py
-    escritor_videoviejo.py
     dvrip.py
     tests/*
 
