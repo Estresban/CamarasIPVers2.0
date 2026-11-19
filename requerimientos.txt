@@ -13,3 +13,5 @@ mysql-connector-python>=9.0.0
 
 # Pruebas automatizadas
 pytest>=8.0.0
+pytest-cov>=7.1.0
+coverage>=7.17.3
