@@ -85,9 +85,9 @@ def iniciar():
     def campo(parent, etiqueta, valor, ocultar=False, ancho=34):
         fila = ttk.Frame(parent)
         fila.pack(fill="x", pady=3)
-        ttk.Label(fila, text=etiqueta, width=18).pack(side="left")
+        ttk.Label(fila, text=etiqueta, width=26).pack(side="left")
         entrada = ttk.Entry(fila, width=ancho, show="*" if ocultar else "")
-        entrada.pack(side="left", fill="x", expand=True)
+        entrada.pack(side="left", padx=(6, 0)) #fill="x", expand=True)
         entrada.insert(0, str(valor))
         return entrada
 
@@ -137,7 +137,7 @@ def iniciar():
         ("cooldown_captura_seg", "Espera entre capturas (s)", valores_grab.get("cooldown_captura_seg", COOLDOWN_CAPTURA_SEG)),
         ("intervalo_fotograma_auto_seg", "Intervalo captura auto (s)", valores_grab.get("intervalo_fotograma_auto_seg", INTERVALO_FOTOGRAMA_AUTO_SEG)),
     ):
-        entradas_grab[clave] = campo(tab_grabacion, etiqueta, defecto)
+        entradas_grab[clave] = campo(tab_grabacion, etiqueta, defecto, ancho=6)
 
     carpetas_actuales = guardados.get("carpetas", {})
     entradas_carpetas = {}
@@ -146,22 +146,22 @@ def iniciar():
         ("capturas_movimiento", "Capturas movimiento", "capturas_movimiento"),
         ("capturas_fotogramas", "Fotogramas", "capturas_fotogramas"),
     ):
-        entradas_carpetas[clave] = campo(tab_grabacion, etiqueta, carpetas_actuales.get(clave, defecto), ancho=38)
+        entradas_carpetas[clave] = campo(tab_grabacion, etiqueta, carpetas_actuales.get(clave, defecto), ancho=20)
 
     audio_guardado = guardados.get("dispositivo_salida_audio", DISPOSITIVO_SALIDA_AUDIO)
-    entrada_audio = campo(tab_general, "Dispositivo salida audio", audio_guardado)
+    entrada_audio = campo(tab_general, "Dispositivo salida audio", audio_guardado, ancho =5)
     token_guardado = guardados.get("telegram_token", TELEGRAM_TOKEN)
     chat_guardado = guardados.get("telegram_chat_id", TELEGRAM_CHAT_ID)
-    entrada_token = campo(tab_general, "Token Bot Telegram", token_guardado, ocultar=True, ancho=38)
-    entrada_chat = campo(tab_general, "Chat ID Telegram", chat_guardado, ancho=38)
+    entrada_token = campo(tab_general, "Token Bot Telegram", token_guardado, ocultar=True, ancho=80)
+    entrada_chat = campo(tab_general, "Chat ID Telegram", chat_guardado, ancho=15)
 
     fila_mosaico = ttk.Frame(tab_general)
     fila_mosaico.pack(fill="x", pady=3)
-    ttk.Label(fila_mosaico, text="Celdas en mosaico", width=18).pack(side="left")
+    ttk.Label(fila_mosaico, text="Celdas en mosaico", width=27).pack(side="left")
     mosaico_actual = str(valores_grab.get("modo_mosaico", MODO_MOSAICO))
-    combo_mosaico = ttk.Combobox(fila_mosaico, values=["1", "2", "4"], state="readonly", width=10)
+    combo_mosaico = ttk.Combobox(fila_mosaico, values=["1", "2", "4"], state="readonly", width=2)
     combo_mosaico.set(mosaico_actual if mosaico_actual in ("1", "2", "4") else "4")
-    combo_mosaico.pack(side="left")
+    combo_mosaico.pack(side="left")#, padx=(1,0))
     
     ttk.Label(tab_general, text="Los cambios se guardan en config.json y se cargan al iniciar la aplicación.",
               foreground="#b9c5d3", wraplength=560).pack(anchor="w", pady=(14, 4))
@@ -180,17 +180,17 @@ def iniciar():
                     variable=var_email_adjuntar).pack(side="left")
     
     entrada_email_rem = campo(tab_correo, "Correo remitente",
-                              email_guardado.get("remitente", EMAIL_REMITENTE), ancho=38)
+                              email_guardado.get("remitente", EMAIL_REMITENTE), ancho=40)
     entrada_email_pass = campo(tab_correo, "Contraseña aplicación",
-                               email_guardado.get("password", EMAIL_PASSWORD), ocultar=True, ancho=38)
+                               email_guardado.get("password", EMAIL_PASSWORD), ocultar=True, ancho=40)
     entrada_email_dest = campo(tab_correo, "Correo destinatario",
-                               email_guardado.get("destinatario", EMAIL_DESTINATARIO), ancho=38)
+                               email_guardado.get("destinatario", EMAIL_DESTINATARIO), ancho=40)
     entrada_email_smtp = campo(tab_correo, "Servidor SMTP",
-                               email_guardado.get("smtp_servidor", EMAIL_SMTP_SERVIDOR), ancho=38)
+                               email_guardado.get("smtp_servidor", EMAIL_SMTP_SERVIDOR), ancho=20)
     entrada_email_puerto = campo(tab_correo, "Puerto SMTP (SSL)",
-                                 email_guardado.get("smtp_puerto", EMAIL_SMTP_PUERTO), ancho=38)
+                                 email_guardado.get("smtp_puerto", EMAIL_SMTP_PUERTO), ancho=10)
     entrada_email_interv = campo(tab_correo, "Espera entre correos (s)",
-                                 email_guardado.get("intervalo_alertas", EMAIL_INTERVALO_ALERTAS), ancho=38)
+                                 email_guardado.get("intervalo_alertas", EMAIL_INTERVALO_ALERTAS), ancho=10)
 
     ttk.Label(
         tab_correo,
@@ -286,7 +286,7 @@ def iniciar():
     ttk.Label(tab_mant, text="Retención circular de disco",
               font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(0, 6))
     entrada_max_gb = campo(tab_mant, "Límite almacenamiento (GB)",
-                           mant_guardado.get("max_gb", 50), ancho=20)
+                           mant_guardado.get("max_gb", 50), ancho=5)
     ttk.Label(tab_mant, text="Borra automáticamente los vídeos y fotos más antiguos al superar este tamaño.",
               foreground="#b9c5d3", wraplength=560).pack(anchor="w", pady=(0, 14))
 
@@ -299,9 +299,9 @@ def iniciar():
                     variable=var_horario_activo).pack(anchor="w", pady=(0, 8))
 
     entrada_hora_ini = campo(tab_mant, "Hora armado (HH:MM)",
-                             mant_guardado.get("hora_inicio", "23:30"), ancho=20)
+                             mant_guardado.get("hora_inicio", "23:30"), ancho=6)
     entrada_hora_fin = campo(tab_mant, "Hora desarmado (HH:MM)",
-                             mant_guardado.get("hora_fin", "07:00"), ancho=20)
+                             mant_guardado.get("hora_fin", "07:00"), ancho=6)
     ttk.Label(tab_mant, text="Nota: Soporta tramos nocturnos que cruzan medianoche (ej. 23:30 a 07:00). Se aplica en caliente sin reiniciar.",
               foreground="#b9c5d3", wraplength=560).pack(anchor="w", pady=(10, 4))
     
