@@ -1,6 +1,6 @@
 import json
 import time
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import numpy as np
 
 from camara_base import CamaraBase
