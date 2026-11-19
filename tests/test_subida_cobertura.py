@@ -130,13 +130,25 @@ def test_camara_rtsp_presets_audio_y_bucle_video(monkeypatch):
     monkeypatch.setattr(CamaraRTSP, "_conectar_onvif", lambda self: None)
     monkeypatch.setattr(CamaraRTSP, "_bucle_captura_audio_rtsp", lambda self: None)
 
-    cam = CamaraRTSP(_cfg_rtsp(), indice=0)
+    fake_cap = MagicMock()
+    frame_falso = np.zeros((480, 640, 3), dtype=np.uint8)
+    monkeypatch.setattr("camaras.cv2.VideoCapture", lambda *a, **kw: fake_cap)
+
+    # Evita que el hilo de arranque compita con el test antes de configurar fake_cap
+    with patch("camaras.threading.Thread"):
+        cam = CamaraRTSP(_cfg_rtsp(), indice=0)
+
     cam.ptz = MagicMock()
     cam.media_profile = MagicMock(token="Prof1")
 
+    # Ejecutamos los hilos de presets de forma síncrona para evitar colisiones de lock_red en Linux
+    monkeypatch.setattr(
+        "camaras.threading.Thread",
+        lambda target, args=(), daemon=True: MagicMock(start=lambda: target(*args)),
+    )
+
     cam.ir_a_preset(1)
     cam.guardar_preset(2)
-    time.sleep(0.05)
     cam.ptz.GotoPreset.assert_called_once()
     cam.ptz.SetPreset.assert_called_once()
 
@@ -150,15 +162,11 @@ def test_camara_rtsp_presets_audio_y_bucle_video(monkeypatch):
     fake_ffplay.terminate.assert_called_once()
 
     # Simulación de 1 frame en _bucle_video y luego detención
-    fake_cap = MagicMock()
-    frame_falso = np.zeros((480, 640, 3), dtype=np.uint8)
-
     def _leer_una_vez():
         cam.detener = True
         return True, frame_falso
 
     fake_cap.read.side_effect = _leer_una_vez
-    monkeypatch.setattr("camaras.cv2.VideoCapture", lambda *a, **kw: fake_cap)
 
     cam.detener = False
     cam._bucle_video()

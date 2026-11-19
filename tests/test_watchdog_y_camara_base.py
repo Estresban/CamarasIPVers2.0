@@ -142,7 +142,7 @@ def test_watchdog_ciclo_completo_caida_alerta_y_recuperacion():
     with patch("watchdog.time.time", side_effect=simular_tiempo), \
          patch.object(wd._evento_detener, "wait", side_effect=simular_wait), \
          patch("watchdog.notificaciones.alertas_activas", True), \
-         patch("watchdog.notificaciones.enviar_mensaje_telegram") as mock_tg, \
+         patch.object(wd, "_notificar_salud") as mock_salud, \
          patch("watchdog.threading.Thread") as mock_thread:
 
         mock_thread.side_effect = lambda target, args=(), daemon=True: MagicMock(
@@ -151,9 +151,11 @@ def test_watchdog_ciclo_completo_caida_alerta_y_recuperacion():
         wd._bucle_vigilancia()
 
     assert cam_activa.forzar_reconexion.called
-    assert mock_tg.call_count == 2
-    assert "FALLO DE SALUD" in mock_tg.call_args_list[0][0][0]
-    assert "CÁMARA RECUPERADA" in mock_tg.call_args_list[1][0][0]
+    assert mock_salud.call_count == 2
+    assert "FALLO DE SALUD" in mock_salud.call_args_list[0][0][0]
+    assert "CÁMARA RECUPERADA" in mock_salud.call_args_list[1][0][0]
+
+
 
 
 
