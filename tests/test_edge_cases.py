@@ -2,6 +2,7 @@ import smtplib
 import time
 from unittest.mock import MagicMock
 import numpy as np
+import threading
 
 from camara_base import CamaraBase
 from camaras import CamaraRTSP
@@ -95,6 +96,7 @@ def test_telegram_envio_multipart_foto(monkeypatch):
     assert "multipart/form-data" in cabeceras["Content-Type"]
 
 
+
 def test_camara_rtsp_ptz_onvif_stop_tras_mover(monkeypatch):
     """Comprueba que CamaraRTSP ejecuta ContinuousMove y detiene el motor con Stop."""
     monkeypatch.setattr(CamaraRTSP, "_conectar_onvif", lambda self: None)
@@ -113,16 +115,23 @@ def test_camara_rtsp_ptz_onvif_stop_tras_mover(monkeypatch):
         "canal": 1,
         "stream": 0,
     }
+
     cam = CamaraRTSP(cfg, indice=0)
     cam.ptz = MagicMock()
     cam.media_profile = MagicMock(token="Perfil_0")
 
+    stop_event = threading.Event()
+    cam.ptz.Stop.side_effect = lambda *args, **kwargs: stop_event.set()
+
     cam.mover_ptz(0.5, 0.0, 0.0)
-    time.sleep(0.05)
+
+    assert stop_event.wait(timeout=2), "El hilo PTZ no llegó a ejecutar Stop"
 
     cam.ptz.ContinuousMove.assert_called_once()
     cam.ptz.Stop.assert_called_once_with({"ProfileToken": "Perfil_0"})
+
     cam.cerrar()
+
 
 
 def test_grabacion_continua_rotacion_de_bloques(tmp_path, monkeypatch):
