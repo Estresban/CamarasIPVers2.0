@@ -1,3 +1,52 @@
+ pytest --cov=. --cov-report=term-missing
+============================== test session starts ===============================
+platform win32 -- Python 3.15.0, pytest-9.2.0, pluggy-1.7.0
+rootdir: C:\Users\vicar.PORTATIL\Documents\CamarasIPVers2.0
+plugins: platformdirs-4.14.7, cov-7.1.0
+collected 99 items                                                                
+
+tests\test_camara_base.py ....                                              [  4%]
+tests\test_camaras_extra.py .......                                         [ 11%]
+tests\test_cobertura_final.py .....                                         [ 16%]
+tests\test_config_y_cifrado.py ............................                 [ 44%]
+tests\test_correo_alertas_extra.py ......                                   [ 50%]
+tests\test_edge_cases.py .....                                              [ 55%]
+tests\test_escritor_logger_extra.py ..                                      [ 57%]
+tests\test_final_wfrancotirador.py .                                        [ 58%]
+tests\test_main_extra.py .........                                          [ 67%]
+tests\test_mantenimiento_y_eventos.py .......                               [ 74%]
+tests\test_netip_ptz_y_ui.py [Camara NetIP Test] Iluminación cambiada a: BLANCA
+......                                         [ 80%]
+tests\test_notificaciones_extra.py ......                                   [ 86%]
+tests\test_subida_cobertura.py ......                                       [ 92%]
+tests\test_watchdog_y_camara_base.py ...¡ALERTA! Movimiento en Camara Prueba -> C:\Users\vicar.PORTATIL\AppData\Local\Temp\pytest-of-vicar\pytest-54\test_camara_base_deteccion_mov0\MOV_Camara_Prueba_20261119_172919.jpg
+....                                [100%]
+
+================================= tests coverage =================================
+________________ coverage: platform win32, python 3.15.0-final-0 _________________
+
+Name                   Stmts   Miss  Cover   Missing
+----------------------------------------------------
+camara_base.py           283      1    99%   428
+camaras.py               355      2    99%   432-433
+config.py                222      6    97%   14, 34-35, 249, 270-271
+configuracion.py         263      1    99%   462
+correo_alertas.py        132      2    98%   61-62
+escritor_video.py         73      0   100%
+grabacion_eventos.py      77      4    95%   39, 107-109
+logger.py                 37      0   100%
+main.py                  389      5    99%   560, 612-614, 680
+mantenimiento.py         136      4    97%   90, 100, 133, 169
+notificaciones.py        285      3    99%   104, 206-207
+watchdog.py               63      0   100%
+----------------------------------------------------
+TOTAL                   2315     28    99%
+=============================== 99 passed in 8.49s ===============================
+Mensaje de prueba unitaria StiViHome
+
+
+
+
 
 pytest -v                               
 ========================================================================== test session starts ===========================================================================
