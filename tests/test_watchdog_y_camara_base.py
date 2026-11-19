@@ -123,23 +123,26 @@ def test_watchdog_ciclo_completo_caida_alerta_y_recuperacion():
         umbral_alerta_seg=60.0,
     )
 
-    tiempos = [100.0, 106.0, 170.0, 230.0]
-
-    def simular_tiempo():
-        if len(tiempos) == 1:
-            cam_activa.frame = frame_b
-        return tiempos.pop(0) if tiempos else 235.0
-
+    reloj = {"actual": 100.0}
     llamadas_wait = {"n": 0}
 
     def simular_wait(timeout=None):
         llamadas_wait["n"] += 1
-        if llamadas_wait["n"] >= 5:
-            wd.cerrar()  # Activa el evento real para romper el while
+        if llamadas_wait["n"] == 1:
+            reloj["actual"] = 100.0   # Vuelta 1: registra inicio de caída (t=100)
+        elif llamadas_wait["n"] == 2:
+            reloj["actual"] = 106.0   # Vuelta 2: supera timeout_seg (6s) -> reconecta
+        elif llamadas_wait["n"] == 3:
+            reloj["actual"] = 170.0   # Vuelta 3: supera umbral_alerta_seg (70s) -> alerta salud
+        elif llamadas_wait["n"] == 4:
+            reloj["actual"] = 230.0   # Vuelta 4: cambia frame -> alerta recuperación
+            cam_activa.frame = frame_b
+        else:
+            wd.cerrar()
             return True
         return False
 
-    with patch("watchdog.time.time", side_effect=simular_tiempo), \
+    with patch("watchdog.time.time", side_effect=lambda: reloj["actual"]), \
          patch.object(wd._evento_detener, "wait", side_effect=simular_wait), \
          patch("watchdog.notificaciones.alertas_activas", True), \
          patch.object(wd, "_notificar_salud") as mock_salud, \
@@ -152,8 +155,8 @@ def test_watchdog_ciclo_completo_caida_alerta_y_recuperacion():
 
     assert cam_activa.forzar_reconexion.called
     assert mock_salud.call_count == 2
-    assert "FALLO DE SALUD" in mock_salud.call_args_list[0][0][0]
-    assert "CÁMARA RECUPERADA" in mock_salud.call_args_list[1][0][0]
+    assert "FALLO DE SALUD" in mock_salud.call_args_list
+    assert "CÁMARA RECUPERADA" in mock_salud.call_args_list
 
 
 
