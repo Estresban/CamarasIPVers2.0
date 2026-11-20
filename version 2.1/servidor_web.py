@@ -487,12 +487,12 @@ def iniciar_servidor_web(camaras, host="127.0.0.1"):
 Asegúrate de tener estas líneas en tu **`main.py`** para arrancar tanto la base de datos como el servidor web:
 
 1. En las importaciones superiores de `main.py`:
-```python
+
 import base_datos
 import servidor_web
 
 2. Dentro de main(), justo después de mantenimiento.iniciar():
-python
+
     mantenimiento = GestorMantenimiento(CAMARAS)
     mantenimiento.iniciar()
     base_datos.inicializar_bd()
